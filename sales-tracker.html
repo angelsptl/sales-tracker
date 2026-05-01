@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sales & Revenue Tracker</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  margin: 0;
+  padding: 20px;
+}
+
+h1, h2 {
+  color: #1f2937;
+}
+
+.section {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 5px 15px rgba(0,0,0,.08);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+th {
+  background: #eef2ff;
+}
+
+input, select {
+  padding: 6px;
+  width: 100%;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Sales, Revenue & Expense Tracker</h1>
+
+<!-- SALES LOG -->
+<div class="section">
+<h2>Sales Log</h2>
+
+<table id="salesTable">
+<thead>
+<tr>
+<th>Date</th>
+<th>Month</th>
+<th>Item</th>
+<th>Qty</th>
+<th>Unit Price</th>
+<th>Total</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><input type="date"></td>
+<td>
+<select>
+<option>January</option><option>February</option><option>March</option>
+<option>April</option><option>May</option><option>June</option>
+<option>July</option><option>August</option><option>September</option>
+<option>October</option><option>November</option><option>December</option>
+</select>
+</td>
+<td><input></td>
+<td><input type="number" oninput="calculate(this)"></td>
+<td><input type="number" oninput="calculate(this)"></td>
+<td class="total">0</td>
+<td>
+<select>
+<option>Paid</option>
+<option>Pending</option>
+<option>Cancelled</option>
+</select>
+</td>
+</tr>
+</tbody>
+</table>
+
+<button onclick="addRow()">Add Sale</button>
+</div>
+
+<!-- EXPENSES -->
+<div class="section">
+<h2>Expenses</h2>
+
+<table id="expenseTable">
+<thead>
+<tr>
+<th>Date</th>
+<th>Month</th>
+<th>Name</th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><input type="date"></td>
+<td>
+<select>
+<option>January</option><option>February</option><option>March</option>
+<option>April</option><option>May</option><option>June</option>
+<option>July</option><option>August</option><option>September</option>
+<option>October</option><option>November</option><option>December</option>
+</select>
+</td>
+<td><input></td>
+<td><input type="number"></td>
+</tr>
+</tbody>
+</table>
+
+<button onclick="addExpense()">Add Expense</button>
+</div>
+
+<!-- SUMMARY -->
+<div class="section">
+<h2>Monthly Summary</h2>
+
+<select id="summaryMonth" onchange="updateSummary()">
+<option>January</option><option>February</option><option>March</option>
+<option>April</option><option>May</option><option>June</option>
+<option>July</option><option>August</option><option>September</option>
+<option>October</option><option>November</option><option>December</option>
+</select>
+
+<p>Total Revenue: ₱<span id="revenue">0</span></p>
+<p>Total Expenses: ₱<span id="expenseTotal">0</span></p>
+<p><strong>Net Profit: ₱<span id="profit">0</span></strong></p>
+</div>
+
+<script>
+function calculate(el){
+  const row = el.closest("tr");
+  const qty = row.cells[3].querySelector("input").value || 0;
+  const price = row.cells[4].querySelector("input").value || 0;
+  row.cells[5].innerText = qty * price;
+  updateSummary();
+}
+
+function addRow(){
+  document.querySelector("#salesTable tbody").insertAdjacentHTML("beforeend",
+  document.querySelector("#salesTable tbody tr").outerHTML);
+}
+
+function addExpense(){
+  document.querySelector("#expenseTable tbody").insertAdjacentHTML("beforeend",
+  document.querySelector("#expenseTable tbody tr").outerHTML);
+}
+
+function updateSummary(){
+  const month = document.getElementById("summaryMonth").value;
+  let revenue = 0;
+  let expenses = 0;
+
+  document.querySelectorAll("#salesTable tbody tr").forEach(row=>{
+    if(row.cells[1].querySelector("select").value === month &&
+       row.cells[6].querySelector("select").value === "Paid"){
+      revenue += Number(row.cells[5].innerText);
+    }
+  });
+
+  document.querySelectorAll("#expenseTable tbody tr").forEach(row=>{
+    if(row.cells[1].querySelector("select").value === month){
+      expenses += Number(row.cells[3].querySelector("input").value || 0);
+    }
+  });
+
+  document.getElementById("revenue").innerText = revenue;
+  document.getElementById("expenseTotal").innerText = expenses;
+  document.getElementById("profit").innerText = revenue - expenses;
+}
+</script>
+
+</body>
+</html>
+``
